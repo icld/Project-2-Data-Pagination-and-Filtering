@@ -46,7 +46,7 @@ function showPage(list, page) {
 function addPagination(list) {
    const numOfPages = Math.ceil(list.length / itemsPerPage)
    linkList.innerHTML = '';
-   for (let i = 1; i < numOfPages; i++) {
+   for (let i = 1; i <= numOfPages; i++) {
       const addButton = `<li>
 <button id = "pagButton" type="button">${i}</button>
 </li>`;
@@ -61,7 +61,6 @@ function addPagination(list) {
 linkList.addEventListener('click', (event) => {
    const targ = event.target
    const buttons = document.getElementsByTagName('button')
-
    for (let i = 0; i < buttons.length; i++) {
       buttons[i].className = '';
       targ.className = 'active'
