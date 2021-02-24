@@ -1,4 +1,5 @@
 
+// adds search within header element
 const header = document.querySelector('.header')
 header.insertAdjacentHTML('beforeend', `<form class='form' type= 'submit'><label for="search" class="student-search">
 <input id="search-input" placeholder="Search by name...">
@@ -7,16 +8,18 @@ header.insertAdjacentHTML('beforeend', `<form class='form' type= 'submit'><label
 
 const itemsPerPage = 9
 const linkList = document.querySelector(".link-list")
+const form = document.querySelector('form')
 const studentList = document.querySelector('.student-list')
-const pageDiv = document.querySelector(".page")
-const form = document.querySelector('.form');
+const h2 = document.querySelector('h2')
+h2.id = 'h2'
+const searchButton = document.querySelector('#sub')
+const searchInput = document.querySelector('#search-input');
 
 
-
+//creates studentItem from data.js and to studentList to be displayed
 function showPage(list, page) {
    const startIndex = (page * itemsPerPage) - itemsPerPage
    const endIndex = page * itemsPerPage
-
    studentList.innerHTML = '';
    for (let i in list) {
       if (i >= startIndex && i < endIndex) {
@@ -39,6 +42,7 @@ function showPage(list, page) {
    }
 }
 
+// determines the number of pages to create, and creates the buttons for those pages
 function addPagination(list) {
    const numOfPages = Math.ceil(list.length / itemsPerPage)
    linkList.innerHTML = '';
@@ -47,12 +51,13 @@ function addPagination(list) {
 <button id = "pagButton" type="button">${i}</button>
 </li>`;
       linkList.insertAdjacentHTML("beforeend", addButton);
+      const firstButton = document.querySelector('#pagButton');
+      firstButton.className = 'active'
    }
-   const firstButton = document.querySelector('#pagButton');
-   firstButton.className = 'active'
+
 }
 
-
+// listens on pagination buttons.  Changes page based on text within, and changes appearance of the buttons
 linkList.addEventListener('click', (event) => {
    const targ = event.target
    const buttons = document.getElementsByTagName('button')
@@ -64,9 +69,7 @@ linkList.addEventListener('click', (event) => {
    }
 })
 
-const searchButton = document.querySelector('#sub')
-const searchInput = document.querySelector('#search-input');
-
+// creates a div alert and changes search button style
 function alertMe() {
    const alertMe = document.createElement('div')
    const header = form.parentNode
@@ -77,6 +80,8 @@ function alertMe() {
    alertMe.textContent = `Please try again`;
    header.insertBefore(alertMe, form)
 }
+
+// removes alert and alert style
 function removeAlert() {
    searchButton.style = ''
    const alertMe = document.getElementsByClassName('alert')[0]
@@ -85,6 +90,7 @@ function removeAlert() {
    }
 }
 
+// searches student names, displays only matching, and alerts if search field is empty
 function studentSearch() {
    const userInput = searchInput.value.toLowerCase();
    const filter = [];
@@ -98,7 +104,6 @@ function studentSearch() {
          if (firstName.includes(userInput) || lastName.includes(userInput)) {
             filter.push(data[i]);
          }
-
       }
       showPage(filter, 1)
       addPagination(filter)
@@ -107,20 +112,43 @@ function studentSearch() {
       addPagination(data)
    }
 }
+// listens on key clicks in search. Calls studentSearch and removes the alert
 searchInput.addEventListener('keyup', () => {
    studentSearch();
+   removeAlert()
 })
 
+// removes alert when clicking back inside the search input field 
+searchInput.addEventListener('click', () => {
+   removeAlert()
+})
+
+// listens on button click.  calls student search and removes alert
 searchButton.addEventListener('click', (e) => {
    e.preventDefault();
-   removeAlert()
+   removeAlert();
    studentSearch();
+
 })
 
+// resets page on clicking h2
+h2.addEventListener('click', () => {
+   showPage(data, 1)
+   addPagination(data)
+   removeAlert()
+   searchInput.value = ''
+})
 
+// when hover over h2, change color, and make cursor a pointer
+h2.addEventListener('mouseover', () => {
+   h2.style.color = 'teal'
+   h2.style.cursor = 'pointer'
+})
 
-
-
-
+// removes hover effect when mouse is not over h2
+h2.addEventListener('mouseleave', () => {
+   h2.style.color = ''
+})
+// creates page and pagination
 showPage(data, 1)
 addPagination(data)
