@@ -16,6 +16,7 @@ const searchButton = document.querySelector('#sub')
 const searchInput = document.querySelector('#search-input');
 
 
+
 //creates studentItem from data.js and to studentList to be displayed
 function showPage(list, page) {
    const startIndex = (page * itemsPerPage) - itemsPerPage
@@ -75,17 +76,31 @@ function alertMe() {
    searchButton.style.backgroundColor = 'red';
    alertMe.className = 'alert'
    alertMe.style.backgroundColor = 'red'
-   alertMe.style.fontSize = '2em'
-   alertMe.textContent = `Please try again`;
+   alertMe.style.fontSize = '1.76em'
+   alertMe.textContent = `Please Enter a Name`;
    header.insertBefore(alertMe, form)
 }
-
+// creates a NO MATCH alert
+function alertNoMatch() {
+   const alertNoMatch = document.createElement('div')
+   const header = form.parentNode
+   searchButton.style.backgroundColor = 'red';
+   alertNoMatch.className = 'alertNoMatch'
+   alertNoMatch.style.backgroundColor = 'red'
+   alertNoMatch.style.fontSize = '1.76em'
+   alertNoMatch.textContent = `No Match Found!`;
+   header.insertBefore(alertNoMatch, form)
+}
 // removes alert and alert style
 function removeAlert() {
    searchButton.style = ''
    const alertMe = document.getElementsByClassName('alert')[0]
+   const alertNoMatch = document.getElementsByClassName('alertNoMatch')[0]
    if (alertMe) {
       header.removeChild(alertMe)
+   }
+   if (alertNoMatch) {
+      header.removeChild(alertNoMatch)
    }
 }
 
