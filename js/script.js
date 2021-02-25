@@ -14,7 +14,7 @@ const h2 = document.querySelector('h2')
 h2.id = 'h2'
 const searchButton = document.querySelector('#sub')
 const searchInput = document.querySelector('#search-input');
-
+let filter = [];
 
 
 //creates studentItem from data.js and to studentList to be displayed
@@ -65,8 +65,13 @@ linkList.addEventListener('click', (event) => {
    for (let i = 0; i < buttons.length; i++) {
       buttons[i].className = '';
       targ.className = 'active'
+   }
+   if (filter.length !== 0) {
+      showPage(filter, targ.textContent)
+   } else {
       showPage(data, targ.textContent)
    }
+
 })
 
 // creates a div alert and changes search button style
@@ -90,6 +95,7 @@ function alertNoMatch() {
    alertNoMatch.style.fontSize = '1.76em'
    alertNoMatch.textContent = `No Match Found!`;
    header.insertBefore(alertNoMatch, form)
+   filter.length = 0
 }
 // removes alert and alert style
 function removeAlert() {
@@ -107,8 +113,8 @@ function removeAlert() {
 // searches student names, displays only matching, and alerts if search field is empty
 function studentSearch() {
    const userInput = searchInput.value.toLowerCase();
-   const filter = [];
-   if (userInput.length === 0 && searchButton.backgroundColor != 'red') {
+
+   if (userInput.length === 0 && searchButton.style.backgroundColor != 'red') {
       alertMe()
    } else if (userInput.length !== 0) {
       removeAlert()
@@ -119,17 +125,25 @@ function studentSearch() {
             filter.push(data[i]);
          }
       }
-      showPage(filter, 1)
-      addPagination(filter)
+
+      if (filter.length !== 0) {
+         showPage(filter, 1)
+         addPagination(filter)
+      } else {
+         alertNoMatch()
+      }
+
    } else {
       showPage(data, 1);
       addPagination(data)
+      filter.length = 0
    }
 }
 // listens on key clicks in search. Calls studentSearch and removes the alert
 searchInput.addEventListener('keyup', () => {
    studentSearch();
    removeAlert()
+   filter.length = 0
 })
 
 // removes alert when clicking back inside the search input field 
@@ -142,11 +156,12 @@ searchButton.addEventListener('click', (e) => {
    e.preventDefault();
    removeAlert();
    studentSearch();
-
+   console.log(filter.length)
 })
 
 // resets page on clicking h2
 h2.addEventListener('click', () => {
+   filter.length = 0
    showPage(data, 1)
    addPagination(data)
    removeAlert()
