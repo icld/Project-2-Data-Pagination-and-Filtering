@@ -16,7 +16,6 @@ const searchButton = document.querySelector('#sub')
 const searchInput = document.querySelector('#search-input');
 let filter = [];
 
-
 //creates studentItem from data.js and to studentList to be displayed
 function showPage(list, page) {
    const startIndex = (page * itemsPerPage) - itemsPerPage
@@ -60,19 +59,27 @@ function addPagination(list) {
 
 // listens on pagination buttons.  Changes page based on text within, and changes appearance of the buttons
 linkList.addEventListener('click', (event) => {
-   const targ = event.target
-   const buttons = document.getElementsByTagName('button')
-   for (let i = 0; i < buttons.length; i++) {
-      buttons[i].className = '';
-      targ.className = 'active'
+   if (event.target.type === 'button') {
+      console.log('click')
+      const targ = event.target
+      const buttons = document.getElementsByTagName('button')
+      for (let i = 0; i < buttons.length; i++) {
+         buttons[i].className = '';
+         targ.className = 'active'
+      }
+      if (filter.length !== 0) {
+         showPage(filter, targ.textContent)
+      } else {
+         showPage(data, targ.textContent)
+      }
    }
-   if (filter.length !== 0) {
-      showPage(filter, targ.textContent)
-   } else {
-      showPage(data, targ.textContent)
-   }
-
 })
+
+// consolidates showPage and addPagination functions
+function resetPage(list, page) {
+   showPage(list, page)
+   addPagination(list)
+}
 
 // creates a div alert and changes search button style
 function alertMe() {
@@ -85,6 +92,7 @@ function alertMe() {
    alertMe.textContent = `Please Enter a Name`;
    header.insertBefore(alertMe, form)
 }
+
 // creates a NO MATCH alert
 function alertNoMatch() {
    const alertNoMatch = document.createElement('div')
@@ -97,6 +105,7 @@ function alertNoMatch() {
    header.insertBefore(alertNoMatch, form)
    filter.length = 0
 }
+
 // removes alert and alert style
 function removeAlert() {
    searchButton.style = ''
@@ -117,7 +126,7 @@ function studentSearch() {
    if (userInput.length === 0 && searchButton.style.backgroundColor != 'red') {
       alertMe()
    } else if (userInput.length !== 0) {
-      removeAlert()
+      // removeAlert()
       for (let i in data) {
          const firstName = data[i].name.first.toLowerCase()
          const lastName = data[i].name.last.toLowerCase()
@@ -125,35 +134,46 @@ function studentSearch() {
             filter.push(data[i]);
          }
       }
-
       if (filter.length !== 0) {
-         showPage(filter, 1)
-         addPagination(filter)
+         resetPage(filter, 1)
       } else {
          alertNoMatch()
+         // edit: added these functions to update to show 0 results and pagination buttons
+         resetPage(filter, 1)
       }
-
    } else {
-      showPage(data, 1);
-      addPagination(data)
-      filter.length = 0
+      resetPage(data, 1)
    }
+
 }
 // listens on key clicks in search. Calls studentSearch and removes the alert
 searchInput.addEventListener('keyup', () => {
+   filter.length = 0
    studentSearch();
    removeAlert()
-   filter.length = 0
+   if (searchInput.value.length === 0) {
+      resetPage(data, 1)
+   }
+   if (linkList.hasChildNodes() === false) {
+      removeAlert()
+      alertNoMatch()
+   }
+
 })
+
+
 
 // removes alert when clicking back inside the search input field 
 searchInput.addEventListener('click', () => {
    removeAlert()
+   filter.length = 0
 })
 
 // listens on button click.  calls student search and removes alert
 searchButton.addEventListener('click', (e) => {
    e.preventDefault();
+   // edit: added filter @ 0 to prevent repeat building of same card on multiple clicks
+   filter.length = 0
    removeAlert();
    studentSearch();
    console.log(filter.length)
@@ -162,8 +182,7 @@ searchButton.addEventListener('click', (e) => {
 // resets page on clicking h2
 h2.addEventListener('click', () => {
    filter.length = 0
-   showPage(data, 1)
-   addPagination(data)
+   resetPage(data, 1)
    removeAlert()
    searchInput.value = ''
 })
@@ -179,5 +198,4 @@ h2.addEventListener('mouseleave', () => {
    h2.style.color = ''
 })
 // creates page and pagination
-showPage(data, 1)
-addPagination(data)
+resetPage(data, 1)
