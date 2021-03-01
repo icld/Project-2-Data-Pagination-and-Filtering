@@ -60,7 +60,6 @@ function addPagination(list) {
 // listens on pagination buttons.  Changes page based on text within, and changes appearance of the buttons
 linkList.addEventListener('click', (event) => {
    if (event.target.type === 'button') {
-      console.log('click')
       const targ = event.target
       const buttons = document.getElementsByTagName('button')
       for (let i = 0; i < buttons.length; i++) {
@@ -176,7 +175,6 @@ searchButton.addEventListener('click', (e) => {
    filter.length = 0
    removeAlert();
    studentSearch();
-   console.log(filter.length)
 })
 
 // resets page on clicking h2
